@@ -1250,7 +1250,29 @@ var APV_IOS={mac:"Mac Mini M4",cloud:"Codemagic ☁️",defer:"تأجيل الق
 var apvState={},apvActive=null,apvSel=null,apvDB=null;
 (function(){try{if(APV_FB.apiKey==="YOUR_API_KEY")throw 0;firebase.initializeApp(APV_FB);apvDB=firebase.database().ref("starlink_mvp");apvDB.on("value",function(s){apvState=s.val()||{};apvRender();});}catch(e){var w=document.getElementById("apv-warn");if(w)w.classList.add("show");apvRender();}})();
 function apvSave(id,d){apvState[id]=d;if(apvDB)apvDB.child(id).set(d);apvRender();}
-function apvEmail(p,ios){if(APV_EJS.svc==="YOUR_SERVICE_ID"||!window.emailjs)return;var pend=APV_PEOPLE.filter(function(a){return!apvState[a.id];}).map(function(a){return a.name;});emailjs.send(APV_EJS.svc,APV_EJS.tpl,{to_emails:APV_PEOPLE.map(function(a){return a.email;}).join(","),approver_name:p.name,approver_role:p.role,ios_choice:APV_IOS[ios]||ios,approval_date:new Date().toLocaleDateString("ar-SA",{year:"numeric",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"}),doc_link:location.href,pending_names:pend.length?pend.join(" · "):"اكتمل الجميع"},APV_EJS.key).catch(function(e){console.warn(e);});}
+function apvEmail(p,ios){
+  if(APV_EJS.svc==="YOUR_SERVICE_ID"||!window.emailjs)return;
+  var pend=APV_PEOPLE.filter(function(a){return!apvState[a.id];}).map(function(a){return a.name;});
+  var CEO=APV_PEOPLE.find(function(a){return a.id==="ceo";});
+  var isCEO=(p.id==="ceo");
+  // To: approver + remaining (excluding CEO if not approver)
+  var toList=APV_PEOPLE.filter(function(a){
+    if(a.id==="ceo")return isCEO; // CEO in To only if he is the approver
+    return true;
+  }).map(function(a){return a.email;});
+  // Cc: CEO (only when others approve)
+  var ccEmail=(!isCEO&&CEO)?CEO.email:"";
+  emailjs.send(APV_EJS.svc,APV_EJS.tpl,{
+    to_emails:toList.join(","),
+    cc_email:ccEmail,
+    approver_name:p.name,
+    approver_role:p.role,
+    ios_choice:APV_IOS[ios]||ios,
+    approval_date:new Date().toLocaleDateString("ar-SA",{year:"numeric",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"}),
+    doc_link:location.href,
+    pending_names:pend.length?pend.join(" · "):"اكتمل الجميع"
+  },APV_EJS.key).catch(function(e){console.warn(e);});
+}
 function apvRender(){var n=APV_PEOPLE.filter(function(a){return!!apvState[a.id];}).length;var f=document.getElementById("apv-fill"),c=document.getElementById("apv-cnt"),d=document.getElementById("apv-done");if(f)f.style.width=(n/3*100)+"%";if(c)c.textContent=n+" / 3 معتمِدين";if(d)d.classList.toggle("show",n===3);APV_PEOPLE.forEach(function(a){var s=apvState[a.id],card=document.getElementById("apv-c-"+a.id);if(!card)return;card.classList.toggle("ok",!!s);var b=document.getElementById("apv-b-"+a.id);if(b)b.innerHTML=s?'<span class="apv-bdg apv-bdg-d">معتمَد</span>':'<span class="apv-bdg apv-bdg-w">بانتظار الاعتماد</span>';var sg=document.getElementById("apv-s-"+a.id);if(s&&sg){var dt=new Date(s.ts);sg.innerHTML='<div class="apv-sig-name">'+s.written+'</div><div class="apv-sig-meta">'+dt.toLocaleDateString("ar-SA",{year:"numeric",month:"short",day:"numeric"})+'</div><span class="apv-sig-ch">'+(APV_IOS[s.ios]||s.ios)+'</span>';}else if(sg)sg.innerHTML='<div class="apv-sig-line"></div>';var btn=document.getElementById("apv-btn-"+a.id);if(btn)btn.style.display=s?"none":"";});["mac","cloud","defer"].forEach(function(opt){var el=document.getElementById("apv-vt-"+opt);if(!el)return;var names=APV_PEOPLE.filter(function(a){return apvState[a.id]&&apvState[a.id].ios===opt;}).map(function(a){return apvState[a.id].written;});el.innerHTML=names.map(function(n){return'<span class="apv-chip">✓ '+n+'</span>';}).join("");});var tl=document.getElementById("apv-tl");if(!tl)return;var signed=APV_PEOPLE.filter(function(a){return!!apvState[a.id];}).map(function(a){return Object.assign({},a,apvState[a.id]);}).sort(function(a,b){return new Date(a.ts)-new Date(b.ts);});tl.innerHTML=signed.length?signed.map(function(s,i){var d=new Date(s.ts);return'<div class="apv-tl-row" style="animation-delay:'+(i*.07)+'s"><div class="apv-tl-dot"></div><div><div class="apv-tl-who"><strong>'+s.written+'</strong> — '+s.role+'</div><span class="apv-tl-ch">'+(APV_IOS[s.ios]||s.ios)+'</span><div class="apv-tl-when">'+d.toLocaleDateString("ar-SA",{year:"numeric",month:"short",day:"numeric"})+' — '+d.toLocaleTimeString("ar-SA",{hour:"2-digit",minute:"2-digit"})+'</div></div></div>';}).join(""):'<div class="apv-tl-empty">لا توجد اعتمادات بعد</div>';}
 function apvOpen(id){var a=APV_PEOPLE.find(function(x){return x.id===id;});if(!a||apvState[id])return;apvActive=id;apvSel=null;var mn=document.getElementById("apv-mn"),mr=document.getElementById("apv-mr"),inp=document.getElementById("apv-inp"),err=document.getElementById("apv-err");if(mn)mn.textContent=a.name;if(mr)mr.textContent=a.role;if(inp)inp.value="";if(err)err.textContent="";["mac","cloud","defer"].forEach(function(o){var e=document.getElementById("apv-o-"+o);if(e)e.className="apv-opt";});var m=document.getElementById("apv-modal");if(m)m.classList.add("open");setTimeout(function(){var i=document.getElementById("apv-inp");if(i)i.focus();},220);}
 function apvClose(){var m=document.getElementById("apv-modal");if(m)m.classList.remove("open");apvActive=apvSel=null;}
