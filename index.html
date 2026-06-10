@@ -1270,13 +1270,25 @@ h1:hover .sec-num {
     </div>
 
     </div>
-    <label class="apv-ml">اكتب اسمك الكامل للتوقيع</label>
-    <input class="apv-input" id="apv-inp" type="text" placeholder="الاسم الكامل..." onkeydown="if(event.key==='Enter')apvConfirm()">
-    <div class="apv-err" id="apv-err"></div>
-    <div class="apv-note">بالاعتماد، تؤكّد اطّلاعك على مستند متطلبات MVP تطبيق <strong>نجمة صلة العقارية</strong> وموافقتك على الخيار المحدد. سيتلقّى الجميع إشعاراً بريدياً.</div>
-    <div class="apv-actions">
-      <button class="apv-ok" onclick="apvConfirm()">تأكيد الاعتماد ✓</button>
-      <button class="apv-cancel" onclick="apvClose()">إلغاء</button>
+    <!-- Step 2: shown after card selection -->
+    <div id="apv-step2" style="display:none;margin-top:.2rem">
+      <!-- Selected option summary -->
+      <div id="apv-sel-summary" style="background:rgba(28,52,97,.05);border:1.5px solid var(--navy);border-radius:9px;padding:.6rem .9rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center">
+        <span id="apv-sel-total" style="font-size:1rem;font-weight:900;color:var(--navy)">—</span>
+        <span id="apv-sel-name" style="font-size:.82rem;font-weight:700;color:var(--navy)">—</span>
+      </div>
+      <label class="apv-ml">اكتب اسمك الكامل للتوقيع</label>
+      <input class="apv-input" id="apv-inp" type="text" placeholder="الاسم الكامل..." onkeydown="if(event.key==='Enter')apvConfirm()">
+      <div class="apv-err" id="apv-err"></div>
+      <div class="apv-note">بالاعتماد، تؤكّد اطّلاعك على مستند متطلبات MVP تطبيق <strong>نجمة صلة العقارية</strong> وموافقتك على الخيار المحدد. سيتلقّى الجميع إشعاراً بريدياً.</div>
+      <div class="apv-actions">
+        <button class="apv-ok" onclick="apvConfirm()">تأكيد الاعتماد ✓</button>
+        <button class="apv-cancel" onclick="apvClose()">إلغاء</button>
+      </div>
+    </div>
+    <!-- Step 1 back button (shown after step 2 appears) -->
+    <div id="apv-back-wrap" style="display:none;margin-top:.5rem;text-align:center">
+      <button onclick="apvBackToStep1()" style="background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;font-family:'Tajawal',sans-serif;text-decoration:underline">← تغيير الخيار</button>
     </div>
   </div>
 </div>
@@ -1312,11 +1324,42 @@ function apvEmail(p,ios){
   },APV_EJS.key).catch(function(e){console.warn(e);});
 }
 function apvRender(){var n=APV_PEOPLE.filter(function(a){return!!apvState[a.id];}).length;var f=document.getElementById("apv-fill"),c=document.getElementById("apv-cnt"),d=document.getElementById("apv-done");if(f)f.style.width=(n/3*100)+"%";if(c)c.textContent=n+" / 3 معتمِدين";if(d)d.classList.toggle("show",n===3);APV_PEOPLE.forEach(function(a){var s=apvState[a.id],card=document.getElementById("apv-c-"+a.id);if(!card)return;card.classList.toggle("ok",!!s);var b=document.getElementById("apv-b-"+a.id);if(b)b.innerHTML=s?'<span class="apv-bdg apv-bdg-d">معتمَد</span>':'<span class="apv-bdg apv-bdg-w">بانتظار الاعتماد</span>';var sg=document.getElementById("apv-s-"+a.id);if(s&&sg){var dt=new Date(s.ts);sg.innerHTML='<div class="apv-sig-name">'+s.written+'</div><div class="apv-sig-meta">'+dt.toLocaleDateString("ar-SA",{year:"numeric",month:"short",day:"numeric"})+'</div><span class="apv-sig-ch">'+(APV_IOS[s.ios]||s.ios)+'</span>';}else if(sg)sg.innerHTML='<div class="apv-sig-line"></div>';var btn=document.getElementById("apv-btn-"+a.id);if(btn)btn.style.display=s?"none":"";});["mac","cloud","defer"].forEach(function(opt){var el=document.getElementById("apv-vt-"+opt);if(!el)return;var names=APV_PEOPLE.filter(function(a){return apvState[a.id]&&apvState[a.id].ios===opt;}).map(function(a){return apvState[a.id].written;});el.innerHTML=names.map(function(n){return'<span class="apv-chip">✓ '+n+'</span>';}).join("");});var tl=document.getElementById("apv-tl");if(!tl)return;var signed=APV_PEOPLE.filter(function(a){return!!apvState[a.id];}).map(function(a){return Object.assign({},a,apvState[a.id]);}).sort(function(a,b){return new Date(a.ts)-new Date(b.ts);});tl.innerHTML=signed.length?signed.map(function(s,i){var d=new Date(s.ts);return'<div class="apv-tl-row" style="animation-delay:'+(i*.07)+'s"><div class="apv-tl-dot"></div><div><div class="apv-tl-who"><strong>'+s.written+'</strong> — '+s.role+'</div><span class="apv-tl-ch">'+(APV_IOS[s.ios]||s.ios)+'</span><div class="apv-tl-when">'+d.toLocaleDateString("ar-SA",{year:"numeric",month:"short",day:"numeric"})+' — '+d.toLocaleTimeString("ar-SA",{hour:"2-digit",minute:"2-digit"})+'</div></div></div>';}).join(""):'<div class="apv-tl-empty">لا توجد اعتمادات بعد</div>';}
-function apvOpen(id){var a=APV_PEOPLE.find(function(x){return x.id===id;});if(!a||apvState[id])return;apvActive=id;apvSel=null;var mn=document.getElementById("apv-mn"),mr=document.getElementById("apv-mr"),inp=document.getElementById("apv-inp"),err=document.getElementById("apv-err");if(mn)mn.textContent=a.name;if(mr)mr.textContent=a.role;if(inp)inp.value="";if(err)err.textContent="";["mac","cloud","defer"].forEach(function(o){var e=document.getElementById("apv-o-"+o);if(e)e.className="apv-opt";});var m=document.getElementById("apv-modal");if(m)m.classList.add("open");setTimeout(function(){var i=document.getElementById("apv-inp");if(i)i.focus();},220);}
+function apvOpen(id){var a=APV_PEOPLE.find(function(x){return x.id===id;});if(!a||apvState[id])return;apvActive=id;apvSel=null;var mn=document.getElementById("apv-mn"),mr=document.getElementById("apv-mr"),inp=document.getElementById("apv-inp"),err=document.getElementById("apv-err");if(mn)mn.textContent=a.name;if(mr)mr.textContent=a.role;if(inp)inp.value="";if(err)err.textContent="";["mac","cloud","defer"].forEach(function(o){var e=document.getElementById("apv-o-"+o);if(e)e.className="apv-opt";});var s2=document.getElementById("apv-step2"),bk=document.getElementById("apv-back-wrap");
+  if(s2)s2.style.display="none";if(bk)bk.style.display="none";
+  var m=document.getElementById("apv-modal");if(m)m.classList.add("open");}
 function apvClose(){var m=document.getElementById("apv-modal");if(m)m.classList.remove("open");apvActive=apvSel=null;}
-function apvPick(val,el){apvSel=val;["mac","cloud","defer"].forEach(function(o){var e=document.getElementById("apv-o-"+o);if(e)e.className="apv-opt";});el.classList.add("s-"+val);}
+function apvPick(val,el){
+  apvSel=val;
+  ["mac","cloud","defer"].forEach(function(o){var e=document.getElementById("apv-o-"+o);if(e)e.className="apv-opt";});
+  el.classList.add("s-"+val);
+  // Show step 2
+  var step2=document.getElementById("apv-step2");
+  var back=document.getElementById("apv-back-wrap");
+  if(step2){step2.style.display="block";step2.style.animation="apvUp .3s cubic-bezier(.4,0,.2,1)";}
+  if(back)back.style.display="block";
+  // Update summary
+  var labels={mac:{name:"Mac Mini M4",total:"$2,415"},cloud:{name:"Codemagic",total:"$1,942"},defer:{name:"تأجيل",total:"$1,402"}};
+  var lbl=labels[val]||{};
+  var sn=document.getElementById("apv-sel-name"),st=document.getElementById("apv-sel-total");
+  if(sn)sn.textContent=lbl.name||val;
+  if(st)st.textContent=lbl.total||"";
+  // Scroll to step 2 & focus
+  setTimeout(function(){
+    var inp=document.getElementById("apv-inp");
+    if(inp){inp.focus();}
+    if(step2)step2.scrollIntoView({block:"nearest",behavior:"smooth"});
+  },200);
+}
+function apvBackToStep1(){
+  apvSel=null;
+  ["mac","cloud","defer"].forEach(function(o){var e=document.getElementById("apv-o-"+o);if(e)e.className="apv-opt";});
+  var step2=document.getElementById("apv-step2");
+  var back=document.getElementById("apv-back-wrap");
+  if(step2)step2.style.display="none";
+  if(back)back.style.display="none";
+}
 function apvConfirm(){var name=(document.getElementById("apv-inp")||{}).value||"";name=name.trim();var err=document.getElementById("apv-err");if(!apvSel){if(err)err.textContent="يرجى اختيار خيار نشر iOS أولاً";return;}if(!name){if(err)err.textContent="يرجى كتابة اسمك الكامل";return;}if(err)err.textContent="";var a=APV_PEOPLE.find(function(x){return x.id===apvActive;});var btn=document.getElementById("apv-btn-"+apvActive);if(btn){btn.textContent="جارٍ الحفظ...";btn.disabled=true;}apvSave(apvActive,{written:name,role:a.role,email:a.email,ios:apvSel,ts:new Date().toISOString()});apvEmail(a,apvSel);apvClose();}
-window.apvOpen=apvOpen;window.apvClose=apvClose;window.apvPick=apvPick;window.apvConfirm=apvConfirm;
+window.apvOpen=apvOpen;window.apvClose=apvClose;window.apvPick=apvPick;window.apvConfirm=apvConfirm;window.apvBackToStep1=apvBackToStep1;
 </script>
 
 <div class="footer" style="page-break-before:avoid;break-before:avoid">
