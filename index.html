@@ -452,8 +452,7 @@ table.timeline td:first-child{
 .apv-mt{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:.1rem}
 .apv-ms{font-size:.78rem;color:var(--text-muted);margin-bottom:.9rem;padding-bottom:.8rem;border-bottom:1px solid var(--border)}
 .apv-ml{font-size:.76rem;font-weight:700;color:var(--navy);margin-bottom:.35rem;display:block}
-.apv-opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.35rem;margin-bottom:.9rem}
-.apv-opt{border:2px solid var(--border);border-radius:8px;padding:.45rem .25rem;text-align:center;cursor:pointer;background:var(--card);transition:all .18s;font-family:'Tajawal',sans-serif}
+.apv-opt{border:2px solid var(--border);border-radius:10px;cursor:pointer;background:var(--card);transition:all .18s;font-family:'Tajawal',sans-serif;user-select:none}
 .apv-opt:hover{border-color:var(--navy)}
 .apv-opt.s-mac{border-color:var(--navy)!important;background:rgba(28,52,97,.07)!important}
 .apv-opt.s-cloud{border-color:var(--accent)!important;background:rgba(201,150,59,.07)!important}
@@ -1227,10 +1226,49 @@ h1:hover .sec-num {
   <div class="apv-mbox">
     <div class="apv-mt" id="apv-mn">—</div><div class="apv-ms" id="apv-mr">—</div>
     <label class="apv-ml">اختر خيار نشر iOS</label>
-    <div class="apv-opts">
-      <div class="apv-opt" id="apv-o-mac" onclick="apvPick('mac',this)"><span class="apv-olbl" style="color:var(--navy)">🖥 Mac Mini</span><span class="apv-oprice">٣٬٧٩٩ ريال</span></div>
-      <div class="apv-opt" id="apv-o-cloud" onclick="apvPick('cloud',this)"><span class="apv-olbl" style="color:#A8792A">☁️ Codemagic</span><span class="apv-oprice">١٦٩ ريال/شهر</span></div>
-      <div class="apv-opt" id="apv-o-defer" onclick="apvPick('defer',this)"><span class="apv-olbl" style="color:#1A8C5E">⏳ تأجيل</span><span class="apv-oprice">مجاني مؤقتاً</span></div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
+
+      <div class="apv-opt" id="apv-o-mac" onclick="apvPick('mac',this)" style="padding:.7rem .9rem;text-align:right">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+          <span style="font-size:1.05rem;font-weight:900;color:var(--navy)">$2,415 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
+          <span style="font-size:.82rem;font-weight:800;color:var(--navy)">Mac Mini M4</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
+          <span>CAPEX <strong style="color:var(--navy)">$642</strong></span>
+          <span>Mac Mini <strong style="color:var(--navy)">~$1,013</strong></span>
+          <span>OPEX <strong style="color:var(--navy)">$760</strong></span>
+        </div>
+        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">بعد السنة الأولى: $760 فقط — بدون تكلفة iOS</div>
+      </div>
+
+      <div class="apv-opt" id="apv-o-cloud" onclick="apvPick('cloud',this)" style="padding:.7rem .9rem;text-align:right">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+          <span style="font-size:1.05rem;font-weight:900;color:#A8792A">$1,942 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
+          <span style="font-size:.82rem;font-weight:800;color:#A8792A">Codemagic ☁️</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
+          <span>CAPEX <strong style="color:#A8792A">$642</strong></span>
+          <span>Codemagic <strong style="color:#A8792A">$540</strong></span>
+          <span>OPEX <strong style="color:#A8792A">$760</strong></span>
+        </div>
+        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">بعد السنة الأولى: $1,300 — يتجاوز Mac Mini بعد 22 شهراً</div>
+      </div>
+
+      <div class="apv-opt" id="apv-o-defer" onclick="apvPick('defer',this)" style="padding:.7rem .9rem;text-align:right">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+          <span style="font-size:1.05rem;font-weight:900;color:#1A8C5E">$1,402 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
+          <span style="font-size:.82rem;font-weight:800;color:#1A8C5E">تأجيل — Codemagic مجاناً</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
+          <span>CAPEX <strong style="color:#1A8C5E">$642</strong></span>
+          <span>iOS <strong style="color:#1A8C5E">$0</strong></span>
+          <span>OPEX <strong style="color:#1A8C5E">$760</strong></span>
+        </div>
+        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">الأقل تكلفةً — قرار iOS يُؤجَّل لما قبل الإطلاق</div>
+      </div>
+
+    </div>
+
     </div>
     <label class="apv-ml">اكتب اسمك الكامل للتوقيع</label>
     <input class="apv-input" id="apv-inp" type="text" placeholder="الاسم الكامل..." onkeydown="if(event.key==='Enter')apvConfirm()">
