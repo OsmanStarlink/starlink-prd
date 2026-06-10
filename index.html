@@ -445,10 +445,10 @@ table.timeline td:first-child{
 .apv-tl-ch{display:inline-block;background:rgba(28,52,97,.07);border-radius:4px;padding:.08rem .4rem;font-size:.68rem;font-weight:700;color:var(--navy);margin:.12rem 0}
 .apv-tl-when{font-size:.68rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace}
 /* Modal */
-.apv-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:1rem}
+.apv-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;overflow-y:auto}
 .apv-modal.open{display:flex}
 .apv-modal-bg{position:absolute;inset:0;background:rgba(14,29,53,.72);backdrop-filter:blur(6px)}
-.apv-mbox{background:var(--card);border-radius:18px;padding:1.6rem;width:100%;max-width:400px;position:relative;z-index:1;box-shadow:0 16px 50px rgba(0,0,0,.25);animation:apvPop .3s cubic-bezier(.34,1.56,.64,1)}
+.apv-mbox{background:var(--card);border-radius:18px;padding:1.6rem;width:100%;max-width:420px;position:relative;z-index:1;box-shadow:0 16px 50px rgba(0,0,0,.25);animation:apvPop .3s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto}
 .apv-mt{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:.1rem}
 .apv-ms{font-size:.78rem;color:var(--text-muted);margin-bottom:.9rem;padding-bottom:.8rem;border-bottom:1px solid var(--border)}
 .apv-ml{font-size:.76rem;font-weight:700;color:var(--navy);margin-bottom:.35rem;display:block}
@@ -1224,56 +1224,58 @@ h1:hover .sec-num {
 <div class="apv-modal" id="apv-modal">
   <div class="apv-modal-bg" onclick="apvClose()"></div>
   <div class="apv-mbox">
-    <div class="apv-mt" id="apv-mn">—</div><div class="apv-ms" id="apv-mr">—</div>
-    <label class="apv-ml">اختر خيار نشر iOS</label>
-    <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
+    <div class="apv-mt" id="apv-mn">—</div>
+    <div class="apv-ms" id="apv-mr">—</div>
 
-      <div class="apv-opt" id="apv-o-mac" onclick="apvPick('mac',this)" style="padding:.7rem .9rem;text-align:right">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
-          <span style="font-size:1.05rem;font-weight:900;color:var(--navy)">$2,415 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
-          <span style="font-size:.82rem;font-weight:800;color:var(--navy)">Mac Mini M4</span>
+    <!-- STEP 1: iOS Options -->
+    <div id="apv-step1">
+      <label class="apv-ml">اختر خيار نشر iOS — التكلفة الإجمالية للسنة الأولى</label>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.6rem">
+
+        <div class="apv-opt" id="apv-o-mac" onclick="apvPick('mac',this)" style="padding:.7rem .9rem;text-align:right">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+            <span style="font-size:1.05rem;font-weight:900;color:var(--navy)">$2,415 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
+            <span style="font-size:.82rem;font-weight:800;color:var(--navy)">Mac Mini M4</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
+            <span>CAPEX <strong style="color:var(--navy)">$642</strong></span>
+            <span>Mac Mini <strong style="color:var(--navy)">~$1,013</strong></span>
+            <span>OPEX <strong style="color:var(--navy)">$760</strong></span>
+          </div>
+          <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">بعد السنة الأولى: $760 فقط</div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
-          <span>CAPEX <strong style="color:var(--navy)">$642</strong></span>
-          <span>Mac Mini <strong style="color:var(--navy)">~$1,013</strong></span>
-          <span>OPEX <strong style="color:var(--navy)">$760</strong></span>
+
+        <div class="apv-opt" id="apv-o-cloud" onclick="apvPick('cloud',this)" style="padding:.7rem .9rem;text-align:right">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+            <span style="font-size:1.05rem;font-weight:900;color:#A8792A">$1,942 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
+            <span style="font-size:.82rem;font-weight:800;color:#A8792A">Codemagic ☁️</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
+            <span>CAPEX <strong style="color:#A8792A">$642</strong></span>
+            <span>Codemagic <strong style="color:#A8792A">$540</strong></span>
+            <span>OPEX <strong style="color:#A8792A">$760</strong></span>
+          </div>
+          <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">يتجاوز Mac Mini بعد 22 شهراً</div>
         </div>
-        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">بعد السنة الأولى: $760 فقط — بدون تكلفة iOS</div>
+
+        <div class="apv-opt" id="apv-o-defer" onclick="apvPick('defer',this)" style="padding:.7rem .9rem;text-align:right">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+            <span style="font-size:1.05rem;font-weight:900;color:#1A8C5E">$1,402 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
+            <span style="font-size:.82rem;font-weight:800;color:#1A8C5E">تأجيل — Codemagic مجاناً</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
+            <span>CAPEX <strong style="color:#1A8C5E">$642</strong></span>
+            <span>iOS <strong style="color:#1A8C5E">$0</strong></span>
+            <span>OPEX <strong style="color:#1A8C5E">$760</strong></span>
+          </div>
+          <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">الأقل تكلفةً مؤقتاً</div>
+        </div>
       </div>
-
-      <div class="apv-opt" id="apv-o-cloud" onclick="apvPick('cloud',this)" style="padding:.7rem .9rem;text-align:right">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
-          <span style="font-size:1.05rem;font-weight:900;color:#A8792A">$1,942 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
-          <span style="font-size:.82rem;font-weight:800;color:#A8792A">Codemagic ☁️</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
-          <span>CAPEX <strong style="color:#A8792A">$642</strong></span>
-          <span>Codemagic <strong style="color:#A8792A">$540</strong></span>
-          <span>OPEX <strong style="color:#A8792A">$760</strong></span>
-        </div>
-        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">بعد السنة الأولى: $1,300 — يتجاوز Mac Mini بعد 22 شهراً</div>
-      </div>
-
-      <div class="apv-opt" id="apv-o-defer" onclick="apvPick('defer',this)" style="padding:.7rem .9rem;text-align:right">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
-          <span style="font-size:1.05rem;font-weight:900;color:#1A8C5E">$1,402 <span style="font-size:.68rem;font-weight:400;color:var(--text-muted)">السنة الأولى</span></span>
-          <span style="font-size:.82rem;font-weight:800;color:#1A8C5E">تأجيل — Codemagic مجاناً</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem;font-size:.69rem;color:var(--text-sec);border-top:1px solid var(--border);padding-top:.35rem">
-          <span>CAPEX <strong style="color:#1A8C5E">$642</strong></span>
-          <span>iOS <strong style="color:#1A8C5E">$0</strong></span>
-          <span>OPEX <strong style="color:#1A8C5E">$760</strong></span>
-        </div>
-        <div style="font-size:.65rem;color:var(--text-muted);margin-top:.2rem">الأقل تكلفةً — قرار iOS يُؤجَّل لما قبل الإطلاق</div>
-      </div>
-
     </div>
 
-    </div>
-    <!-- Step 2: shown after card selection -->
-    <div id="apv-step2" style="display:none;margin-top:.2rem">
-      <!-- Selected option summary -->
-      <div id="apv-sel-summary" style="background:rgba(28,52,97,.05);border:1.5px solid var(--navy);border-radius:9px;padding:.6rem .9rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center">
+    <!-- STEP 2: Sign (hidden until card selected) -->
+    <div id="apv-step2" style="display:none">
+      <div id="apv-sel-summary" style="background:rgba(28,52,97,.06);border:1.5px solid var(--navy);border-radius:9px;padding:.6rem .9rem;margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center">
         <span id="apv-sel-total" style="font-size:1rem;font-weight:900;color:var(--navy)">—</span>
         <span id="apv-sel-name" style="font-size:.82rem;font-weight:700;color:var(--navy)">—</span>
       </div>
@@ -1283,14 +1285,12 @@ h1:hover .sec-num {
       <div class="apv-note">بالاعتماد، تؤكّد اطّلاعك على مستند متطلبات MVP تطبيق <strong>نجمة صلة العقارية</strong> وموافقتك على الخيار المحدد. سيتلقّى الجميع إشعاراً بريدياً.</div>
       <div class="apv-actions">
         <button class="apv-ok" onclick="apvConfirm()">تأكيد الاعتماد ✓</button>
-        <button class="apv-cancel" onclick="apvClose()">إلغاء</button>
+        <button class="apv-cancel" onclick="apvBackToStep1()">← تغيير الخيار</button>
       </div>
     </div>
-    <!-- Step 1 back button (shown after step 2 appears) -->
-    <div id="apv-back-wrap" style="display:none;margin-top:.5rem;text-align:center">
-      <button onclick="apvBackToStep1()" style="background:none;border:none;font-size:.78rem;color:var(--text-muted);cursor:pointer;font-family:'Tajawal',sans-serif;text-decoration:underline">← تغيير الخيار</button>
-    </div>
+
   </div>
+</div>
 </div>
 <script>
 var APV_FB={apiKey:"AIzaSyBnQJ05DzTOg0MDHLxI1H5tozC3kP6avnw",authDomain:"starlink-mvp.firebaseapp.com",databaseURL:"https://starlink-mvp-default-rtdb.firebaseio.com",projectId:"starlink-mvp",appId:"1:11789486215:web:7abdc7625d2a4b69161022"};
@@ -1330,29 +1330,29 @@ function apvOpen(id){var a=APV_PEOPLE.find(function(x){return x.id===id;});if(!a
 function apvClose(){var m=document.getElementById("apv-modal");if(m)m.classList.remove("open");apvActive=apvSel=null;}
 function apvPick(val,el){
   apvSel=val;
-  ["mac","cloud","defer"].forEach(function(o){var e=document.getElementById("apv-o-"+o);if(e)e.className="apv-opt";});
-  el.classList.add("s-"+val);
-  // Show step 2
+  ["mac","cloud","defer"].forEach(function(o){
+    var c=document.getElementById("apv-o-"+o);
+    if(!c)return;
+    if(o===val){c.className="apv-opt s-"+val;c.style.display="";}
+    else{c.style.display="none";}
+  });
   var step2=document.getElementById("apv-step2");
   var back=document.getElementById("apv-back-wrap");
-  if(step2){step2.style.display="block";step2.style.animation="apvUp .3s cubic-bezier(.4,0,.2,1)";}
+  if(step2)step2.style.display="block";
   if(back)back.style.display="block";
-  // Update summary
-  var labels={mac:{name:"Mac Mini M4",total:"$2,415"},cloud:{name:"Codemagic",total:"$1,942"},defer:{name:"تأجيل",total:"$1,402"}};
+  var labels={mac:{name:"Mac Mini M4",total:"$2,415"},cloud:{name:"Codemagic ☁️",total:"$1,942"},defer:{name:"تأجيل",total:"$1,402"}};
   var lbl=labels[val]||{};
   var sn=document.getElementById("apv-sel-name"),st=document.getElementById("apv-sel-total");
   if(sn)sn.textContent=lbl.name||val;
   if(st)st.textContent=lbl.total||"";
-  // Scroll to step 2 & focus
-  setTimeout(function(){
-    var inp=document.getElementById("apv-inp");
-    if(inp){inp.focus();}
-    if(step2)step2.scrollIntoView({block:"nearest",behavior:"smooth"});
-  },200);
+  setTimeout(function(){var i=document.getElementById("apv-inp");if(i)i.focus();},150);
 }
 function apvBackToStep1(){
   apvSel=null;
-  ["mac","cloud","defer"].forEach(function(o){var e=document.getElementById("apv-o-"+o);if(e)e.className="apv-opt";});
+  ["mac","cloud","defer"].forEach(function(o){
+    var c=document.getElementById("apv-o-"+o);
+    if(c){c.className="apv-opt";c.style.display="";}
+  });
   var step2=document.getElementById("apv-step2");
   var back=document.getElementById("apv-back-wrap");
   if(step2)step2.style.display="none";
